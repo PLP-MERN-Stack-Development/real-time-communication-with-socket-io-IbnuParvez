@@ -23,9 +23,18 @@ export const useSocket = () => {
   const [typingUsers, setTypingUsers] = useState([]);
 
   // Connect to socket server
-  const connect = (username) => {
+  const connect = async (username) => {
     socket.connect();
     if (username) {
+      // Fetch message history
+      try {
+        const response = await fetch(`${SOCKET_URL}/api/messages`);
+        const messageHistory = await response.json();
+        setMessages(messageHistory);
+      } catch (error) {
+        console.error('Failed to fetch message history:', error);
+      }
+
       socket.emit('user_join', username);
     }
   };
